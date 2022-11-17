@@ -9,8 +9,9 @@ const pool = new Pool({
 
 const cohortId = process.argv[2];
 console.log(cohortId);
-const queryLimit = process.argv[3];
+const queryLimit = process.argv[3] || 5;
 console.log(queryLimit);
+const values = [`%${cohortId}%`, queryLimit]
 
 pool.connect()
   .then(()=> {
@@ -25,8 +26,8 @@ pool.query(
     FROM students
     JOIN cohorts
     ON cohorts.id = students.cohort_id
-    WHERE cohorts.name LIKE '%${cohortId}%'
-    LIMIT ${queryLimit};`
+    WHERE cohorts.name LIKE $1
+    LIMIT $2;`, values
 )
   .then((res) => {
     console.table(/* `Pool query response rows: `,  */res.rows);

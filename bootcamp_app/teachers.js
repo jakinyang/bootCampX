@@ -8,6 +8,7 @@ const pool = new Pool({
 });
 
 const cohortId = process.argv[2];
+const values = [`%${cohortId}%`]
 
 pool.connect()
   .then(()=> {
@@ -23,8 +24,8 @@ pool.query(
     JOIN assistance_requests ON teacher_id = teachers.id
     JOIN students ON student_id = students.id
     JOIN cohorts ON cohort_id = cohorts.id
-    WHERE cohorts.name = '${cohortId}'
-    ORDER BY teacher;`
+    WHERE cohorts.name LIKE $1
+    ORDER BY teacher;`, values
 )
   .then((res) => {
     console.table(/* `Pool query response rows: `,  */res.rows);
